@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GestionG.Domain\GestionG.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
+    <PackageReference Include="Core.IUnitOfWork" Version="1.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.3" />
+  </ItemGroup>
+
+</Project>
