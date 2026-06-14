@@ -39,6 +39,7 @@ namespace GestionG.Api.Controllers
         }
   
         [HttpPost]
+        [Authorize(Roles = "Admin,Usuario")]
         public async Task<ActionResult<CategoriaDTo>> Crear([FromBody] CategoriaCrearDTo dto)
         {
             if (!ModelState.IsValid)
@@ -48,6 +49,7 @@ namespace GestionG.Api.Controllers
         }
       
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin,Usuario")]
         public async Task<ActionResult<CategoriaDTo>> Actualizar(int id, [FromBody] CategoriaActualizarDTo dto)
         {
             if (!ModelState.IsValid)
@@ -57,6 +59,7 @@ namespace GestionG.Api.Controllers
         }
         
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin,Usuario")]
         public async Task<IActionResult> Eliminar(int id)
         {
             await _categoriaService.EliminarAsync(id);

@@ -10,6 +10,7 @@ namespace GestionG.Application.Interface.Service
         Task<GastoDTo?> ObterPorId(int id);
         Task<IEnumerable<GastoDTo>> ObtenerTodosAsync();
         Task<IEnumerable<GastoDTo>> ObtenerPorUsuarioAsync(int idUsuario);
+        Task<decimal> ObtenerTotalPorUsuarioAsync(int idUsuario);
         Task<GastoDTo> CrearAsync(GastoCrearDTo dto);
         Task EliminarAsync(int id);
     }

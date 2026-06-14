@@ -8,6 +8,7 @@ namespace GestionG.Api.Controllers
     
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class DetalleController : ControllerBase
     {
         private readonly IDetalleService _detalleService;
@@ -34,10 +35,20 @@ namespace GestionG.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post([FromBody] DetalleCrearDTo dto)
         {
-            
-            var resultado = await _detalleService.CrearAsync(dto);
+            // Si el usuario es rol Usuario, validar que el gasto pertenezca al mismo usuario
+            var roles = User.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value);
+            var isUsuario = roles.Contains("Usuario");
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            int? currentUserId = null;
+            if (isUsuario && userIdClaim != null)
+            {
+                currentUserId = int.Parse(userIdClaim.Value);
+            }
+
+            var resultado = await _detalleService.CrearAsync(dto, currentUserId);
             return CreatedAtAction(nameof(GetById), new { id = resultado.Id }, resultado);
 
         }

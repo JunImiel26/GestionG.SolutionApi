@@ -39,7 +39,16 @@ if (variablesFaltantes.Any())
     throw new Exception($"Faltan las siguientes variables de entorno: {string.Join(", ", variablesFaltantes)}");
 }
 
-var connectionString = $"Host={host};Port={port};Database={database};Username={user};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+// Construir la cadena de conexión
+var connectionString =
+    $"Host={host};" +
+    $"Port={port};" +
+    $"Database={database};" +
+    $"Username={user};" +
+    $"Password={password};" +
+    $"SSL Mode=Require;" +
+    $"Trust Server Certificate=true";
+
 
 // REGISTRO DE SERVICIOS 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -69,6 +78,7 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role,
         ValidIssuer = builder.Configuration["JWT_ISSUER"] ?? "GestionG.Api",
         ValidAudience = builder.Configuration["JWT_AUDIENCE"] ?? "GestionG.App",
         IssuerSigningKey = new SymmetricSecurityKey(
@@ -97,15 +107,12 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // AutoMapper e infraestructur
 builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile).Assembly);
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-
 
 //swager openAi
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1", // Cambia v0 a v1
@@ -142,21 +149,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-//costruir la app
-var app = builder.Build();
 
-//configuracion para entornos de desarrollo
 
-app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseSwagger();
-app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "GestionGasto API v1");
-  
-});
-
-// Configuración de CORS
+// Configuración de CORS (mover antes de Build para evitar InvalidOperationException)
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>() ?? Array.Empty<string>();
@@ -182,6 +177,22 @@ builder.Services.AddCors(options =>
         }
     });
 });
+
+//costruir la app
+var app = builder.Build();
+
+//configuracion para entornos de desarrollo
+
+app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "GestionGasto API v1");
+  
+});
+
+
 
 
 app.MapGet("/", context =>
@@ -215,7 +226,7 @@ else
     var roleManager = scope.ServiceProvider
         .GetRequiredService<RoleManager<IdentityRole<int>>>();
 
-    string[] roles = { "Admin", "Usser", "cont" };
+    string[] roles = { "Admin", "Usuario", "Contador" };
 
     foreach (var role in roles)
     {

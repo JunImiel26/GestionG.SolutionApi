@@ -10,9 +10,9 @@ namespace GestionG.Application.DTOs.Gasto
     {
         public string Descripcion { get; set; } = null!;
         public decimal MontoTotal { get; set; }
-        public int IdUsuario { get; set; }
+        public int? IdUsuario { get; set; }
 
-        public List<DetalleCrearDTo> Detalles { get; set; } = new List<DetalleCrearDTo>();
+        public List<DetalleCrearEnGastoDTo> Detalles { get; set; } = new List<DetalleCrearEnGastoDTo>();
     }
 
 }

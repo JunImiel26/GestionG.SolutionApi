@@ -37,30 +37,35 @@ namespace GestionG.Application.Services
             return _mapper.Map<IEnumerable<GastoDTo>>(entidades);
         }
 
+        public async Task<decimal> ObtenerTotalPorUsuarioAsync(int idUsuario)
+        {
+            var gastos = await _repository.ObtenerPorUsuarioAsync(idUsuario);
+            return gastos.Sum(g => g.TotalGeneral);
+        }
+
         public async Task<GastoDTo> CrearAsync(GastoCrearDTo dto)
         {
           
+            if (!dto.IdUsuario.HasValue)
+                throw new InvalidOperationException("IdUsuario es requerido. Si eres Usuario, el servidor debe establecerlo desde el token.");
+
             var nuevoGasto = new Gasto
             {
-             
                 TotalGeneral = dto.MontoTotal,
-                IdUsuario = dto.IdUsuario,
-                Fecha = DateTime.UtcNow 
+                IdUsuario = dto.IdUsuario.Value,
+                Fecha = DateTime.UtcNow
             };
 
             // 2. Insertar el encabezado
             var gastoGuardado = await _repository.InsertarAsync(nuevoGasto);
 
-            // 3. Insertar los detalles
+            // 3. Insertar los detalles (si vienen sin IdGasto, se asignará el IdGasto nuevo)
             if (dto.Detalles != null && dto.Detalles.Any())
             {
                 foreach (var d in dto.Detalles)
                 {
                     var detalle = _mapper.Map<Detalle>(d);
-
-                    // 💡 Usamos 'IdGasto' porque así se llama en tu entidad
                     detalle.IdGasto = gastoGuardado.IdGasto;
-
                     await _detalleRepository.InsertarAsync(detalle);
                 }
             }

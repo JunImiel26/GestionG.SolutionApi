@@ -66,7 +66,7 @@ namespace GestionG.Application.Service
             var issuer = _config["JWT_ISSUER"] ?? "GestionG.Api";
             var audience = _config["JWT_AUDIENCE"] ?? "GestionG.App";
 
-            var keyBytes = Encoding.ASCII.GetBytes(key);
+            var keyBytes = Encoding.UTF8.GetBytes(key);
 
             // 1. Definición de los Claims
             var claims = new List<Claim>
@@ -80,7 +80,7 @@ namespace GestionG.Application.Service
 
             // 2. 💡 CORRECCIÓN VITAL: Especificar "JwtBearer" en el ClaimsIdentity
             // Esto le indica a .NET que use los esquemas de nombres estándar para los roles.
-            var Subject = new ClaimsIdentity(claims, "JwtBearer");
+            var Subject = new ClaimsIdentity(claims, "Bearer");
 
             // 3. Creación del Descriptor del Token
             var descriptor = new SecurityTokenDescriptor
@@ -122,7 +122,7 @@ namespace GestionG.Application.Service
 
             // Gestión de Roles
             var roles = await _userManager.GetRolesAsync(usuario);
-            var rolNombre = roles.FirstOrDefault() ?? "USER"; // Valor por defecto si no tiene rol
+            var rolNombre = roles.FirstOrDefault() ?? "Usuario"; // Valor por defecto si no tiene rol
 
             var expiracion = DateTime.UtcNow.AddMinutes(60); // Aumentado a 60 min para pruebas
 
@@ -154,7 +154,7 @@ namespace GestionG.Application.Service
 
             var usuario = tokenDB.Usuario;
             var roles = await _userManager.GetRolesAsync(usuario);
-            var rol = roles.FirstOrDefault() ?? "USER";
+            var rol = roles.FirstOrDefault() ?? "Usuario";
 
             var expiracion = DateTime.UtcNow.AddMinutes(60);
 

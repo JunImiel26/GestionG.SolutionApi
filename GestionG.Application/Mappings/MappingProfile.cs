@@ -39,6 +39,10 @@ namespace GestionG.Application.Mappings
             CreateMap<DetalleCrearDTo, Detalle>()
                 .ForMember(dest => dest.IdDetalle, opt => opt.Ignore())
                 .ForMember(dest => dest.IdGasto, opt => opt.Ignore());
+
+            CreateMap<DetalleCrearEnGastoDTo, Detalle>()
+                .ForMember(dest => dest.IdDetalle, opt => opt.Ignore())
+                .ForMember(dest => dest.IdGasto, opt => opt.Ignore());
              
         
             // GASTOS
